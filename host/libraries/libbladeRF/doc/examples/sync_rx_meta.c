@@ -75,7 +75,7 @@ int16_t *init(struct bladerf *dev, int16_t num_samples)
 
     /* Configure the device's RX for use with the sync interface.
      * SC16 Q11 samples *with* metadata are used. */
-    status = bladerf_sync_config(dev, BLADERF_RX_X1,
+    status = bladerf_sync_config(dev, BLADERF_RX_X2,
                                  BLADERF_FORMAT_SC16_Q11_META, num_buffers,
                                  buffer_size, num_transfers, timeout_ms);
     if (status != 0) {
@@ -90,7 +90,14 @@ int16_t *init(struct bladerf *dev, int16_t num_samples)
     /* We must always enable the RX front end *after* calling
      * bladerf_sync_config(), and *before* attempting to RX samples via
      * bladerf_sync_rx(). */
-    status = bladerf_enable_module(dev, BLADERF_RX, true);
+    status = bladerf_enable_module(dev, BLADERF_CHANNEL_RX(0), true);
+    if (status != 0) {
+        fprintf(stderr, "Failed to enable RX: %s\n", bladerf_strerror(status));
+
+        goto error;
+    }
+
+    status = bladerf_enable_module(dev, BLADERF_CHANNEL_RX(1), true);
     if (status != 0) {
         fprintf(stderr, "Failed to enable RX: %s\n", bladerf_strerror(status));
 
@@ -147,8 +154,10 @@ int sync_rx_meta_now_example(struct bladerf *dev,
             fprintf(stderr, "RX \"now\" failed: %s\n\n",
                     bladerf_strerror(status));
         } else if (meta.status & BLADERF_META_STATUS_OVERRUN) {
-            fprintf(stderr, "Overrun detected. %u valid samples were read.\n",
-                    meta.actual_count);
+/*            fprintf(stderr, "Overrun detected. %u valid samples were read.\n",
+                    meta.actual_count);*/
+            printf("RX'd %u samples at t=%08lu flags=0x%02X [OVR]\n", meta.actual_count,
+                   meta.timestamp, (meta.status>>16));
         } else {
             printf("RX'd %u samples at t=0x%016" PRIx64 "\n", meta.actual_count,
                    meta.timestamp);
@@ -247,7 +256,7 @@ int main(int argc, char *argv[])
     int16_t *samples    = NULL;
 
     const unsigned int num_samples = 4096;
-    const unsigned int rx_count    = 15;
+    const unsigned int rx_count    = 1024;
     const unsigned int timeout_ms  = 2500;
 
     if (argc == 2) {
