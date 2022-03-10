@@ -81,43 +81,44 @@ struct bladerf *example_init(const char *devstr)
         printf("RX gain: %d\n", EXAMPLE_RX_GAIN);
     }
 
-    status = bladerf_set_frequency(dev, BLADERF_CHANNEL_TX(0), EXAMPLE_TX_FREQ);
+    status = bladerf_set_frequency(dev, BLADERF_CHANNEL_RX(1), EXAMPLE_RX_FREQ);
     if (status != 0) {
-        fprintf(stderr, "Faield to set TX frequency: %s\n",
+        fprintf(stderr, "Failed to set RX frequency: %s\n",
                 bladerf_strerror(status));
         goto out;
     } else {
-        printf("TX frequency: %u Hz\n", EXAMPLE_TX_FREQ);
+        printf("RX frequency: %u Hz\n", EXAMPLE_RX_FREQ);
     }
 
-    status = bladerf_set_sample_rate(dev, BLADERF_CHANNEL_TX(0),
+    status = bladerf_set_sample_rate(dev, BLADERF_CHANNEL_RX(1),
                                      EXAMPLE_SAMPLERATE, NULL);
     if (status != 0) {
-        fprintf(stderr, "Failed to set TX sample rate: %s\n",
+        fprintf(stderr, "Failed to set RX sample rate: %s\n",
                 bladerf_strerror(status));
         goto out;
     } else {
-        printf("TX samplerate: %u sps\n", EXAMPLE_SAMPLERATE);
+        printf("RX samplerate: %u sps\n", EXAMPLE_SAMPLERATE);
     }
 
-    status = bladerf_set_bandwidth(dev, BLADERF_CHANNEL_TX(0),
+    status = bladerf_set_bandwidth(dev, BLADERF_CHANNEL_RX(1),
                                    EXAMPLE_BANDWIDTH, NULL);
     if (status != 0) {
-        fprintf(stderr, "Failed to set TX bandwidth: %s\n",
+        fprintf(stderr, "Failed to set RX bandwidth: %s\n",
                 bladerf_strerror(status));
         goto out;
     } else {
-        printf("TX bandwidth: %u\n", EXAMPLE_BANDWIDTH);
+        printf("RX bandwidth: %u Hz\n", EXAMPLE_BANDWIDTH);
     }
 
-    status = bladerf_set_gain(dev, BLADERF_CHANNEL_TX(0), EXAMPLE_TX_GAIN);
+    status = bladerf_set_gain(dev, BLADERF_CHANNEL_RX(1), EXAMPLE_RX_GAIN);
     if (status != 0) {
-        fprintf(stderr, "Failed to set TX gain: %s\n",
+        fprintf(stderr, "Failed to set RX gain: %s\n",
                 bladerf_strerror(status));
         goto out;
     } else {
-        printf("TX gain: %d\n", EXAMPLE_TX_GAIN);
+        printf("RX gain: %d\n", EXAMPLE_RX_GAIN);
     }
+
 
 out:
     if (status != 0) {

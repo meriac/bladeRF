@@ -107,11 +107,11 @@ int main(int argc, char *argv[])
     }
 
     /* Set up TX channel parameters */
-    config.channel    = BLADERF_CHANNEL_TX(0);
-    config.frequency  = 918000000;
-    config.bandwidth  = 1500000;
-    config.samplerate = 250000;
-    config.gain       = -14;
+    config.channel    = BLADERF_CHANNEL_RX(1);
+    config.frequency  = 910000000;
+    config.bandwidth  = 2000000;
+    config.samplerate = 300000;
+    config.gain       = 39;
 
     status = configure_channel(dev, &config);
     if (status != 0) {

@@ -75,7 +75,7 @@ int16_t *init(struct bladerf *dev, int16_t num_samples)
 
     /* Configure the device's RX for use with the sync interface.
      * SC16 Q11 samples *with* metadata are used. */
-    status = bladerf_sync_config(dev, BLADERF_RX_X1,
+    status = bladerf_sync_config(dev, BLADERF_RX_X2,
                                  BLADERF_FORMAT_SC16_Q11_META, num_buffers,
                                  buffer_size, num_transfers, timeout_ms);
     if (status != 0) {
@@ -212,9 +212,8 @@ int sync_rx_meta_sched_example(struct bladerf *dev,
             fprintf(stderr, "Scheduled RX failed: %s\n\n",
                     bladerf_strerror(status));
         } else if (meta.status & BLADERF_META_STATUS_OVERRUN) {
-            fprintf(stderr, "Overrun detected in scheduled RX. "
-                            "%u valid samples were read.\n\n",
-                    meta.actual_count);
+            printf("RX'd %u samples at t=0x%016" PRIx64 "[Overrun detected]\n", meta.actual_count,
+                   meta.timestamp);
         } else {
             printf("RX'd %u samples at t=0x%016" PRIx64 "\n", meta.actual_count,
                    meta.timestamp);
@@ -247,7 +246,7 @@ int main(int argc, char *argv[])
     int16_t *samples    = NULL;
 
     const unsigned int num_samples = 4096;
-    const unsigned int rx_count    = 15;
+    const unsigned int rx_count    = 1024*1024;
     const unsigned int timeout_ms  = 2500;
 
     if (argc == 2) {
